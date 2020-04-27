@@ -1,6 +1,13 @@
+# This file verifies if the no information was lost after decompression
+import os
 
 
-with open("bytecode_decompressed.txt", 'r') as decompr, open("bytecode.txt") as normal:
-    first = decompr.read()
-    second = normal.read().rstrip()
-    print(first == second)
+def verify():
+    for filename in os.listdir("contracts"):
+        with open("contracts/" + filename, 'r') as normal, open("decompressed_contracts/" + filename, "r") as decompressed:
+            first = decompressed.read().rstrip()
+            second = normal.read().rstrip()
+            if first != second:
+                print(filename + "does not correspond")
+                return
+    print("Decompressed files correspond with acutal ones.")

@@ -32,10 +32,12 @@ class HuffmanCoding:
         self.reverse_mapping = {}
         self.freq = {}
         self.saved = 0  # number of chars saved
+        self.codeLen = 2
 
-    # functions for compression:
+    # functions for compression
     def make_frequency_dict(self, text):
-        for character in text:
+        for i in range(0, len(text), self.codeLen):
+            character = text[i:i+self.codeLen]
             if character not in self.freq:
                 self.freq[character] = 0
             self.freq[character] += 1
@@ -81,7 +83,8 @@ class HuffmanCoding:
     # this function encodes the text
     def get_encoded_text(self, text):
         encoded_text = ""
-        for character in text:
+        for i in range(0, len(text), self.codeLen):
+            character = text[i:i+self.codeLen]
             encoded_text += self.codes[character]
         return encoded_text
 
@@ -107,28 +110,23 @@ class HuffmanCoding:
             b.append(int(byte, 2))
         return b
 
-    def compress(self, path):
-        filename, file_extension = os.path.splitext(path)
-        output_path = "compressed_" + filename + "_cmp" + file_extension
+    def compress(self, text):
+        text = text.rstrip()
 
-        with open(path, 'r') as file, open(output_path, 'w') as output:
-            text = file.read()
-            text = text.rstrip()
+        # frequency should be computed before compression
+        self.make_heap(self.freq)
+        self.merge_nodes()
+        self.make_codes()
+        encoded_text = self.get_encoded_text(text)
+        padded_encoded_text = self.pad_encoded_text(encoded_text)
+        b = self.get_byte_array(padded_encoded_text)
+        compressed_bytecode = str(binascii.hexlify(b))[2:-1]
 
-            # frequency should be computed before compression
-            self.make_heap(self.freq)
-            self.merge_nodes()
-            self.make_codes()
-            encoded_text = self.get_encoded_text(text)
-            padded_encoded_text = self.pad_encoded_text(encoded_text)
-
-            b = self.get_byte_array(padded_encoded_text)
-            compressed_bytecode = str(binascii.hexlify(b))[2:-1]
-            output.write(compressed_bytecode)
         print("Compressed. Total chars saved: ", end="")
         print(len(text) - len(compressed_bytecode))
         self.saved += len(text) - len(compressed_bytecode)
-        return output_path
+
+        return compressed_bytecode
 
     """ functions for decompression: """
 
@@ -154,16 +152,8 @@ class HuffmanCoding:
 
         return decoded_text
 
-    def decompress(self, input_path):
-        filename, file_extension = os.path.splitext(input_path)
-        output_path = filename + "_dcmp" + file_extension
-
-        with open(input_path, 'r') as input, open(output_path, 'w') as output:
-            text = input.read()
-            bit_string = binary(text)
-            encoded_text = self.remove_padding(bit_string)
-            decompressed_text = self.decode_text(encoded_text)
-            output.write(decompressed_text)
-
-        print("Decompressed")
-        return output_path
+    def decompress(self, text):
+        bit_string = binary(text)
+        encoded_text = self.remove_padding(bit_string)
+        decompressed_text = self.decode_text(encoded_text)
+        return decompressed_text
