@@ -1,21 +1,60 @@
 # This file calculates the most occuring sequences
+import os
 
+dict = {}
+for filename in os.listdir("contracts"):
+    with open("contracts/" + filename, "r") as file:
+        text = file.read().rstrip()
 
-def sequences(length, str):
-    seq = {}
+    w = ''
 
-    for j in range(length-1, len(str)):
-        i = j-length-1
-        if str[i:j] not in seq:
-            seq[str[i:j]] = 1
+    for i in range(0, len(text), 2):
+        c = text[i:i+2]
+        wc = w+c
+
+        if wc in dict:
+            dict[wc] += 1
+            w = wc
         else:
-            seq[str[i:j]] += 1
-    seq = {k: v for k, v in sorted(seq.items(), key=lambda item: item[1], reverse=True) if v > 5}
-
-    return seq
+            dict[wc] = 0
+            w = c
 
 
-if __name__ == "__main__":
-    with open("contracts/0x0a49f544a98b775c2ef10a65d71d083706afa58f.evm", "r") as file:
-        bytecode = file.read()
-        print(sequences(124, bytecode))
+dict = {k: v for k, v in sorted(
+    {k: (v*len(k))//2 for k, v in dict.items() if v >= 23 and len(k) > 2}.items(), key=lambda item: item[1])}
+
+RedSeq = set()  # register sequences that do not occur independently
+Seq = list(dict.keys())  # all sequences
+
+for i in range(len(Seq)):
+    for j in range(i+1, len(Seq)):
+        s1 = Seq[i]
+        s2 = Seq[j]
+        if s1 in s2 and dict[s1] <= dict[s2]:
+            RedSeq.add(s1)
+
+for red in RedSeq:
+    del dict[red]
+
+dict = {k: (2*v)//len(k) for k, v in dict.items()}
+
+
+def isAtom(s1, Seqs):
+    for s2 in Seqs:
+        if s1 != s2 and s1 in s2:
+            return False
+    return True
+
+
+Seq = list(dict.keys())
+Atoms = [x for x in Seq if isAtom(x, Seq)]
+NotAtoms = [x for x in Seq if not isAtom(x, Seq)]
+
+
+for notAtom in NotAtoms:
+    for atom in Atoms:
+        if notAtom in atom:
+            dict[notAtom] = dict[notAtom] - atom.count(notAtom) * dict[atom]
+
+dict = {k: v for k, v in sorted({k: v for k, v in dict.items() if v >
+                                 1}.items(), key=lambda item: item[1])}

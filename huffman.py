@@ -26,13 +26,13 @@ class HeapNode:
 
 
 class HuffmanCoding:
-    def __init__(self):
+    def __init__(self, len):
         self.heap = []
         self.codes = {}
         self.reverse_mapping = {}
         self.freq = {}
         self.saved = 0  # number of chars saved
-        self.codeLen = 2
+        self.codeLen = len
 
     # functions for compression
     def make_frequency_dict(self, text):

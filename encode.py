@@ -2,12 +2,12 @@
 import os
 from huffman import HuffmanCoding
 from compare import verify
+from rle import encode, decode
 
 # input file path
-path = "bytecode.txt"
-
+total_cmp = 0
 total_len = 0
-h = HuffmanCoding()
+h = HuffmanCoding(2)
 
 for filename in os.listdir("contracts"):
     with open("contracts/" + filename, 'r') as file:
@@ -15,23 +15,26 @@ for filename in os.listdir("contracts"):
         total_len += len(text)
         h.make_frequency_dict(text)
 
-# injecting a new contract from which entropy was not based on
-with open('contracts/0x521A2aC7b33b09fA21A1aD7C040F4e1b5912C1d0.evm', 'w') as file:
-    file.write("600080546001600160a01b0319163317905560c0604052600560808190527f7a5455534400000000000000000000000000000000000000000000000000000060a09081526200005291600291906200011a")
 
 # compressing all contracts
 for filename in os.listdir("contracts"):
     with open("contracts/" + filename, 'r') as input, open("compressed_contracts/" + filename, 'w') as output:
-        output.write(h.compress(input.read()))
+        compressed = h.compress(input.read())
+        total_cmp += len(compressed)
+        output.write(compressed)
 
+saved = total_len - total_cmp
 
-print("Total chars saved: " + str(h.saved))
-print("Compression rate: " + str(h.saved * 100/total_len) + "%")
+print("Total chars saved: " + str(saved))
+print("Compression rate: " + str(saved * 100/total_len) + "%")
 
 # decompressing all contracts
 for filename in os.listdir("compressed_contracts"):
     with open("compressed_contracts/" + filename, "r") as input, open("decompressed_contracts/" + filename, 'w') as output:
         text = input.read()
-        output.write(h.decompress(text))
+        decompressed = h.decompress(text)
+        if len(decompressed) == 0:
+            print(len(text))
+        output.write(decompressed)
 
-verify()
+# verify()
