@@ -16,12 +16,11 @@ for filename in os.listdir("contracts"):
             dict[wc] += 1
             w = wc
         else:
-            dict[wc] = 0
+            dict[wc] = 1
             w = c
 
 
-dict = {k: v for k, v in sorted(
-    {k: (v*len(k))//2 for k, v in dict.items() if v >= 23 and len(k) > 2}.items(), key=lambda item: item[1])}
+dict = {k: (v*len(k))//2 for k, v in dict.items() if v > 20 and len(k) > 2}
 
 RedSeq = set()  # register sequences that do not occur independently
 Seq = list(dict.keys())  # all sequences
@@ -46,15 +45,13 @@ def isAtom(s1, Seqs):
     return True
 
 
-Seq = list(dict.keys())
-Atoms = [x for x in Seq if isAtom(x, Seq)]
-NotAtoms = [x for x in Seq if not isAtom(x, Seq)]
+def independent(dict):
+    Seq = list(dict.keys())
+    Atoms = [x for x in Seq if isAtom(x, Seq)]
+    NotAtoms = [x for x in Seq if not isAtom(x, Seq)]
+    for notAtom in NotAtoms:
+        for atom in Atoms:
+            if notAtom in atom:
+                dict[notAtom] = dict[notAtom] - atom.count(notAtom) * dict[atom]
 
-
-for notAtom in NotAtoms:
-    for atom in Atoms:
-        if notAtom in atom:
-            dict[notAtom] = dict[notAtom] - atom.count(notAtom) * dict[atom]
-
-dict = {k: v for k, v in sorted({k: v for k, v in dict.items() if v >
-                                 1}.items(), key=lambda item: item[1])}
+    return {k: v for k, v in sorted(dict.items(), key=lambda item: item[1]) if len(k) == 2 or v > 1}

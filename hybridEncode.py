@@ -1,5 +1,5 @@
 from compare import verify
-from sequence import dict
+from sequence import dict, independent, isAtom
 from hybridHuff import HuffmanCoding
 import os
 
@@ -26,8 +26,11 @@ for filename in os.listdir("contracts"):
         total_len += len(text)
         h.make_frequency_dict(text)
 
+
+# dict = independent(dict)
 h.freq = addDicts(h.freq, dict)
-initial = len(h.freq)
+
+# h.freq = independent(h.freq)
 h.make_tree()
 
 while True:
@@ -63,3 +66,11 @@ for filename in os.listdir("hybridcompressed_contracts"):
 
 
 verify()
+
+with open("sequences.txt", 'w') as file:
+    s = ''
+
+    for key in {k: v for k, v in sorted(h.freq.items(), key=lambda item: item[1], reverse=True)}:
+        s += key + ' : ' + h.codes[key] + ' : ' + str(h.freq[key]) + '\n'
+
+    file.write(s)
