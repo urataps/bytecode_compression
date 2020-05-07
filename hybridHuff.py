@@ -111,7 +111,7 @@ class HuffmanCoding:
         for i in range(extra_padding):
             encoded_text += "0"
 
-        padded_info = "{0:08b}".format(extra_padding)
+        padded_info = "{0:08b}".format(extra_padding)  # las byte is info about padding
         encoded_text = padded_info + encoded_text
         return encoded_text
 
@@ -132,8 +132,6 @@ class HuffmanCoding:
         self.make_heap(self.freq)
         self.merge_nodes()
         self.make_codes()
-        self.lengths = {len(x) for x in self.codes.keys()}
-        self.lengths = sorted(list(self.lengths))
 
     def make_trie(self):
         _end = '_end_'
@@ -147,7 +145,7 @@ class HuffmanCoding:
         self.trie = root
         return root
 
-    def isOptimal(self):
+    def isOptimal(self):  # if the code does not require more information than the sequence
         for seq in self.codes:
             if len(seq) > 2 and len(seq)*4 <= len(self.codes[seq]):
                 return seq

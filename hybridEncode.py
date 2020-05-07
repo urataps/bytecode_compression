@@ -27,10 +27,7 @@ for filename in os.listdir("contracts"):
         h.make_frequency_dict(text)
 
 
-# dict = independent(dict)
 h.freq = addDicts(h.freq, dict)
-
-# h.freq = independent(h.freq)
 h.make_tree()
 
 while True:
@@ -53,7 +50,6 @@ for filename in os.listdir("contracts"):
         output.write(compressed)
 
 saved = total_len - total_cmp
-
 print("Total chars saved: " + str(saved))
 print("Compression rate: " + str(saved * 100/total_len) + "%")
 
@@ -66,11 +62,3 @@ for filename in os.listdir("hybridcompressed_contracts"):
 
 
 verify()
-
-with open("sequences.txt", 'w') as file:
-    s = ''
-
-    for key in {k: v for k, v in sorted(h.freq.items(), key=lambda item: item[1], reverse=True)}:
-        s += key + ' : ' + h.codes[key] + ' : ' + str(h.freq[key]) + '\n'
-
-    file.write(s)
