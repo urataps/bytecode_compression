@@ -20,7 +20,7 @@ for filename in os.listdir("contracts"):
             w = c
 
 
-dict = {k: (v*len(k))//2 for k, v in dict.items() if v > 20 and len(k) > 2}
+dict = {k: (v*len(k))//2 for k, v in dict.items() if v > 18 and len(k) > 2}
 
 RedSeq = set()  # register sequences that do not occur independently
 Seq = list(dict.keys())  # all sequences

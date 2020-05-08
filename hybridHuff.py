@@ -173,7 +173,7 @@ class HuffmanCoding:
         extra_padding = int(padded_info, 2)
 
         padded_encoded_text = padded_encoded_text[8:]
-        encoded_text = padded_encoded_text[:-1*extra_padding]
+        encoded_text = padded_encoded_text[:-extra_padding]
 
         return encoded_text
 

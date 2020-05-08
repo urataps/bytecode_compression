@@ -30,14 +30,14 @@ for filename in os.listdir("contracts"):
 h.freq = addDicts(h.freq, dict)
 h.make_tree()
 
-while True:
-    redundant = h.isOptimal()
-    if redundant == True:
-        break
-    else:
-        if redundant in h.freq:
-            del h.freq[redundant]
-    h.make_tree()
+# while True:
+#     redundant = h.isOptimal()
+#     if redundant == True:
+#         break
+#     else:
+#         if redundant in h.freq:
+#             del h.freq[redundant]
+#     h.make_tree()
 
 h.make_trie()
 
