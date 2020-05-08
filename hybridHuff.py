@@ -154,15 +154,14 @@ class HuffmanCoding:
     def compress(self, text):
         text = text.rstrip()
 
-        self.make_tree()
         encoded_text = self.get_encoded_text(text)
         padded_encoded_text = self.pad_encoded_text(encoded_text)
         b = self.get_byte_array(padded_encoded_text)
         compressed_bytecode = str(binascii.hexlify(b))[2:-1]
 
-        print("Compressed. Total chars saved: ", end="")
-        print(len(text) - len(compressed_bytecode))
-        self.saved += len(text) - len(compressed_bytecode)
+        # print("Compressed. Total chars saved: ", end="")
+        # print(len(text) - len(compressed_bytecode))
+        # self.saved += len(text) - len(compressed_bytecode)
 
         return compressed_bytecode
 
